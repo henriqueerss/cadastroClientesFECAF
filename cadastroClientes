@@ -1,0 +1,96 @@
+opcao = None
+listaClientes = []
+
+def encontrar_por_nome(nome_busca):
+    nome_busca_norm = nome_busca.strip().casefold()
+    for i, cliente in enumerate(listaClientes):
+        if cliente['nome'].strip().casefold() == nome_busca_norm:
+            return i, cliente
+    return None, None
+
+def ler_idade():
+    while True:
+        idade = input("Digite a idade do cliente: ").strip()
+        if idade.isdigit() and int(idade) >= 0:
+            return int(idade)
+        print("Idade inválida. Digite um número inteiro não negativo.")
+
+while opcao != '0':
+    print("""
+    0 - Sair
+    1 - Inserir
+    2 - Buscar
+    3 - Remover
+    4 - Atualizar
+    5 - Listar
+    """)
+
+    opcao = input("Escolha uma opção: ").strip()
+
+    if opcao == '1':
+        print("Inserir")
+        nome = input("Digite o nome do cliente: ").strip()
+        # evita duplicados ignorando maiúsculas/minúsculas e espaços
+        idx, _ = encontrar_por_nome(nome)
+        if idx is not None:
+            print(f"Cliente '{nome}' já existe na lista!")
+        else:
+            idade = ler_idade()
+            cliente = {"nome": nome, "idade": idade}
+            listaClientes.append(cliente)
+            print(f"Cliente {nome} adicionado com sucesso!")
+
+    elif opcao == '2':
+        print("Buscar")
+        busca = input("Digite o nome OU o índice do cliente: ").strip()
+
+        if busca.isdigit():
+            indice = int(busca)
+            if 0 <= indice < len(listaClientes):
+                cliente = listaClientes[indice]
+                print(f"Cliente encontrado: [{indice}] {cliente['nome']} - {cliente['idade']} anos")
+            else:
+                print("Índice inválido.")
+        else:
+            idx, cliente = encontrar_por_nome(busca)
+            if cliente:
+                print(f"Cliente encontrado: [{idx}] {cliente['nome']} - {cliente['idade']} anos")
+            else:
+                print("Cliente não encontrado.")
+
+    elif opcao == '3':
+        print("Remover")
+        nome = input("Digite o nome do cliente a ser removido: ").strip()
+        idx, cliente = encontrar_por_nome(nome)
+        if cliente:
+            listaClientes.pop(idx)
+            print(f"Cliente {cliente['nome']} removido com sucesso!")
+        else:
+            print(f"Cliente '{nome}' não encontrado.")
+
+    elif opcao == '4':
+        print("Atualizar")
+        nome = input("Digite o nome do cliente a ser atualizado: ").strip()
+        idx, cliente = encontrar_por_nome(nome)
+        if cliente:
+            nova_idade = ler_idade()
+            listaClientes[idx]['idade'] = nova_idade
+            print(f"Cliente {cliente['nome']} atualizado com sucesso!")
+        else:
+            print(f"Cliente '{nome}' não encontrado.")
+
+    elif opcao == '5':
+        print("Listar")
+        if listaClientes:
+            print("Lista de Clientes:")
+            for idx, cliente in enumerate(listaClientes):
+                print(f"{idx}: {cliente['nome']} - {cliente['idade']} anos")
+        else:
+            print("Nenhum cliente cadastrado.")
+
+    elif opcao == '0':
+        pass  # sair
+    else:
+        print("Opção inválida.")
+
+print("Saindo do programa...")
